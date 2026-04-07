@@ -8,7 +8,7 @@ The following Bearer Lab GitHub repositories contain code used during MEMRI prep
 
 
 - **[BearerLab/memri-ela-vs-std](https://github.com/bearerlab/memri-ela-vs-std/blob/main/01_preprocessing/02_memri_preprocessing/slice_interpolation.m)** — A script from this repo is used for slice interpolation. Analysis files of the output from this processing is included here.
-- **[BearerLab/Skull-Stripper](https://github.com//skull-stripper)** — This repo is used for skull stripping of MR brain images. Analysis files of the output from this processing is included here. 
+- **[BearerLab/Skull-Stripper](https://github.com/bearerlab/skull-stripper)** — This repo is used for skull stripping of MR brain images. Analysis files of the output from this processing is included here. 
 - **[BearerLab/Modal-Scaling](https://github.com/bearerlab/modal-scaling)** — This repo is used for intensity normalization. The analysis file of the output from this processing is included here. 
 
 ## Scripts
