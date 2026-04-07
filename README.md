@@ -27,10 +27,10 @@ Note: To run scripts/markdown files, data must be run locally (perhaps after a g
 ## Requirements
 
 - [MATLAB](https://www.mathworks.com/products/matlab.html) with [SPM12](https://www.fil.ion.ucl.ac.uk/spm/software/spm12/)
+- [FSL](https://fsl.fmrib.ox.ac.uk/fsl/docs/)
 - Python 3.8+ with packages as specified in individual scripts
-- R 4.2 with packages as specified in individual R scripts and R Markdown files
+- R 4.1 with packages as specified in individual R scripts and R Markdown files
 - See linked external repositories for their respective dependencies
 
-Note that the code listed in this repository uses various software packages from R, Python, and MATLAB, as well as SPM12.
 
 For R and Python package dependencies, please see the *install_packages* files in [requirements/](./requirements).
