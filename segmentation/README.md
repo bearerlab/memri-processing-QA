@@ -8,6 +8,6 @@ All code is maintained in a dedicated repository:
 
 ## Example Notebook
 
-A copy of the worked example notebook from the InVivoSegment repository is provided here for convenience and reproducibility. This notebook walks through the complete segmentation workflow as applied in this study.
+A copy of the worked example notebook from the InVivoSegment repository is provided here for convenience and reproducibility. This notebook walks through the complete segmentation workflow as applied in this study. This is accompanied by an HTML export.
 
 - **[Examples.ipynb](./Examples.ipynb)** — Step-by-step demonstration of the InVivoSegment pipeline applied to MEMRI data, including examples for how to use the GUI, processing of output data, and visualization of results. Note that this folder will not run directory from here. Please see the *[BearerLab/InVivoSegment](https://github.com/bearerlab/InVivoSegment)* repository for more information.
