@@ -1,0 +1,361 @@
+---
+title: "SNR Analysis Report"
+author: "Taylor W. Uselman (Bearer Lab)"
+date: "Original Date: 4/7/2025"
+output:
+  html_document: 
+    toc: true
+    number_sections: true
+    toc_depth: 5
+    code_folding: show
+    theme: cerulean #spacelab yeti united cosmo | #prettydoc::html_pretty cayman tactile architect leonids hpstr
+    highlight: tango
+  pdf_document:
+    df_print: kable
+fontsize: 12pt
+geometry: margin=0.25in
+always_allow_html: yes
+---
+
+# Summary and Setup: 
+
+This script generates plots for SNR analysis in "Quality Assurance Strategies for Brain State Characterization by MEMRI" by Uselman TW, Jacobs RE, and Bearer EL (2026).
+
+
+```{R setup, include=FALSE}
+# Format RMarkdown Parameters
+knitr::opts_chunk$set(comment = NA, message = FALSE, warning = FALSE, width = 100)
+knitr::opts_chunk$set(fig.align = "center", fig.height = 4, fig.width = 6)
+knitr::opts_chunk$set(cache = TRUE) 
+knitr::opts_chunk$set(echo = TRUE) # Code output is echoed/output immediately after the code in the .html file.
+
+#######################
+# Set Local Directory #
+#######################
+wdir = "SET-LOCAL-DIRECTORY"
+#######################
+setwd(wdir)
+```
+
+
+```{R}
+# Data Processing
+# citation()
+libs = c("openxlsx","tidyverse","ggplot2","nlme","emmeans")
+lL = length(libs)
+vers = c("3.5.0","4.1.0","4.1.0","3.1.0","4.0.0") # minimum R required is 4.1.0
+lV = length(vers)
+minvers = numeric_version(max(package_version(vers)))
+if (getRversion() < minvers) {stop(paste0("ERROR: minimum R version must be ",minvers))} 
+for (i in 1:length(libs)) {
+  if (lL != lV) {stop("be sure correct minvers are included libs")}
+  if (!requireNamespace(libs[i], quietly = TRUE)) {install.packages(libs[i])}
+}
+```
+
+
+```{R}
+# Set up color pallete
+ColPal = data.frame(
+  ColorName = c("Blue","Vermillion","SkyBlue","Yellow"),
+  Red = c(0,213,86,240)/255,
+  Green = c(114,94,180,228)/255,
+  Blue = c(178,0,223,66)/255
+) %>% mutate(
+  RGB = rgb(red=Red,green=Green,blue=Blue,alpha=1)
+)
+```
+
+# Load and Process Raw Data
+
+```{R}
+filename <- "Fig2B_ROI_Data.xlsx"
+
+dat_snr = read.xlsx(filename,
+                    na.strings = NA,
+                    sheet = "SNR_Data",
+                    colNames = T)
+
+dat_snr %>% str()
+
+# FORMAT DATA FRAME
+dat_snr <- dat_snr %>%
+  mutate(
+    MnII = factor(
+      MnII,
+      levels = c("Pre","Post")),
+    ROI = factor(
+      ROI,
+      levels = c("Brain","Muscle","Noise")),
+    ID = factor(ID)
+  )
+
+dat_snr %>% str()
+summary(dat_snr)
+```
+
+## Plot Raw Data
+
+### SNR
+
+```{R}
+p = ggplot(dat_snr %>% filter(ROI != "Noise"),
+           aes(x = MnII, y=SNR, fill=ROI, label=as.factor(ID)))
+p = p + geom_boxplot(position=position_dodge(0.5),
+                     color="black",alpha=0.5,
+                     width=0.5, outlier.shape = NA)
+p = p + geom_text(fill=NA,color="black",size=6)
+p = p + scale_fill_manual(values=ColPal$RGB)
+p = p + facet_grid(. ~ ROI)
+p = p + theme_bw()
+p = p + labs(x="Mn(II)",y="SNR")
+p = p + theme(plot.title = element_blank()
+              , axis.title.x = element_blank()
+              , axis.text.x = element_text(size=14,family="sans")
+              , axis.title.y = element_text(size=16,face="bold",family="sans")
+              , axis.text.y = element_text(size=14,family="sans")
+              , strip.text = element_text(size=16,face="bold",family="sans")
+              , strip.background = element_rect(fill = "grey75")
+              , legend.position = "none")
+p
+```
+
+### CNR
+
+```{R}
+p = ggplot(dat_snr %>% filter(ROI != "Noise"),
+           aes(x = MnII, y=CNR, fill=ROI, label=as.factor(ID)))
+p = p + geom_boxplot(position=position_dodge(0.5),
+                     color="black",alpha=0.5,
+                     width=0.5, outlier.shape = NA)
+p = p + geom_text(fill=NA,color="black",size=6)
+p = p + scale_fill_manual(values=ColPal$RGB)
+p = p + facet_grid(. ~ ROI)
+p = p + theme_bw()
+p = p + labs(x="Mn(II)",y="CNR")
+p = p + theme(plot.title = element_blank()
+              , axis.title.x = element_blank()
+              , axis.text.x = element_text(size=14,family="sans")
+              , axis.title.y = element_text(size=16,face="bold",family="sans")
+              , axis.text.y = element_text(size=14,family="sans")
+              , strip.text = element_text(size=16,face="bold",family="sans")
+              , strip.background = element_rect(fill = "grey75")
+              , legend.position = "none")
+p
+```
+
+# Summarize Data and Calculcate SNR/CNR
+
+```{R}
+dat_snr_sum <- dat_snr %>%
+  group_by(
+    ROI,
+    MnII
+  ) %>%
+  reframe(
+    Avg.SNR = mean(SNR),
+    SD.SNR = sd(SNR),
+    SE.SNR  = SD.SNR / sqrt(n()),
+    COV.SNR = SD.SNR / Avg.SNR,
+    Avg.CNR = mean(CNR),
+    SD.CNR = sd(CNR),
+    SE.CNR  = SD.CNR / sqrt(n()),
+    COV.CNR = SD.CNR / Avg.CNR
+  ) %>%
+  ungroup() 
+
+str(dat_snr_sum)
+summary(dat_snr_sum)
+
+dat_snr_sum
+```
+
+## Plot Summary SNR/CNR Data
+
+### SNR
+
+```{R}
+p = ggplot(dat_snr_sum %>% filter(ROI != "Noise"),
+           aes(x = MnII, y=Avg.SNR, color=ROI))
+p = p + geom_point(position=position_dodge(0.5), alpha=1, size=5)
+p = p + geom_errorbar(aes(ymin = Avg.SNR-SE.SNR, ymax = Avg.SNR+SE.SNR, ),
+                      position=position_dodge(0.5), alpha=1, linewidth=1, width=0.5)
+p = p + scale_color_manual(values=ColPal$RGB)
+p = p + theme_classic()
+p = p + facet_grid(. ~ ROI)
+p = p + labs(x="Mn(II)",y="SNR")
+p = p + theme(plot.title = element_blank()
+              , axis.title.x = element_text(size=16,face="bold",family="sans")
+              , axis.text.x = element_text(size=14,family="sans")
+              , axis.title.y = element_text(size=16,face="bold",family="sans")
+              , axis.text.y = element_text(size=14,family="sans")
+              , strip.text = element_text(size=16,face="bold",family="sans")
+              , strip.background = element_rect(fill = "grey75")
+              , legend.position = "none")
+p
+```
+
+```{R, fig.height=1.2, fig.width=1.6}
+# For Figure 2B
+p = ggplot(dat_snr_sum %>% filter(ROI != "Noise"),
+           aes(x = MnII, y=Avg.SNR, color=ROI))
+p = p + geom_point(position=position_dodge(0.5), alpha=1, size=1)
+p = p + geom_errorbar(aes(ymin = Avg.SNR-SE.SNR, ymax = Avg.SNR+SE.SNR),
+                      position=position_dodge(0.5), alpha=1, linewidth=0.8, width=0.5)
+p = p + scale_color_manual(values=ColPal$RGB)
+p = p + scale_y_continuous(limits = c(15,35), breaks = seq(15,35,5),
+                           expand = c(0,0,0,0))
+p = p + theme_classic()
+p = p + facet_grid(. ~ ROI)
+p = p + labs(x="Mn(II)",y="SNR")
+p = p + theme(plot.title = element_blank()
+              , axis.title.x = element_blank()
+              , axis.text.x = element_text(size=8,family="sans",angle=70,hjust=0,vjust=0)
+              , axis.title.y = element_text(size=9,face="bold",family="sans")
+              , axis.text.y = element_text(size=7,family="sans")
+              , panel.spacing.x = unit(0.05, "lines")
+              , strip.text = element_blank()
+              , strip.background = element_blank()
+              , legend.position = "none")
+# p
+ggsave(filename="./Fig2_B2_SNR.tiff"
+       ,plot=p
+       ,device="tiff"
+       ,path=paste0(wdir)
+       ,width=1.2,height=1.2,units="in",dpi=300)
+```
+
+### CNR
+
+```{R}
+p = ggplot(dat_snr_sum %>% filter(ROI != "Noise"),
+           aes(x = MnII, y=Avg.CNR, color=ROI))
+p = p + geom_point(position=position_dodge(0.5), alpha=1, size=5)
+p = p + geom_errorbar(aes(ymin = Avg.CNR-SE.CNR, ymax = Avg.CNR+SE.CNR),
+                      position=position_dodge(0.5), alpha=1, linewidth=1, width=0.5)
+p = p + scale_color_manual(values=ColPal$RGB)
+p = p + theme_classic()
+p = p + facet_grid(. ~ ROI)
+p = p + labs(x="Mn(II)",y="SNR")
+p = p + theme(plot.title = element_blank()
+              , axis.title.x = element_text(size=16,face="bold",family="sans")
+              , axis.text.x = element_text(size=14,family="sans")
+              , axis.title.y = element_text(size=16,face="bold",family="sans")
+              , axis.text.y = element_text(size=14,family="sans")
+              , strip.text = element_text(size=16,face="bold",family="sans")
+              , strip.background = element_rect(fill = "grey75")
+              , legend.position = "none")
+p
+```
+
+```{R, fig.height=1.2, fig.width=1.6}
+# For Figure 2B
+p = ggplot(dat_snr_sum %>% filter(ROI != "Noise"),
+           aes(x = MnII, y=Avg.CNR, color=ROI))
+p = p + geom_point(position=position_dodge(0.5), alpha=1, size=1)
+p = p + geom_errorbar(aes(ymin = Avg.CNR-SE.CNR, ymax = Avg.CNR+SE.CNR),
+                      position=position_dodge(0.5), alpha=1, linewidth=0.8, width=0.5)
+p = p + scale_color_manual(values=ColPal$RGB)
+p = p + scale_y_continuous(limits = c(2,5.5), breaks = seq(2,5,1),
+                           expand = c(0,0,0,0))
+p = p + theme_classic()
+p = p + facet_grid(. ~ ROI)
+p = p + labs(x="Mn(II)",y="CNR")
+p = p + theme(plot.title = element_blank()
+              , axis.title.x = element_blank()
+              , axis.text.x = element_text(size=8,family="sans",angle=70,hjust=0,vjust=0)
+              , axis.title.y = element_text(size=9,face="bold",family="sans")
+              , axis.text.y = element_text(size=7,family="sans")
+              , panel.spacing.x = unit(0.05, "lines")
+              , strip.text = element_blank()
+              , strip.background = element_blank()
+              , legend.position = "none")
+# p
+ggsave(filename="./Fig2_B3_CNR.tiff"
+       ,plot=p
+       ,device="tiff"
+       ,path=paste0(wdir)
+       ,width=1.2,height=1.2,units="in",dpi=300)
+```
+
+
+```{R}
+lm.SNR <- lme(SNR ~ MnII * ROI, random=(~1|ID), data=dat_snr)
+# summary(lm.SNR)
+
+con.SNR = emmeans(lm.SNR, specs = "MnII", by = c("ROI"))
+con.SNR %>% pairs()
+
+lm.CNR <- lme(CNR ~ MnII * ROI, random=(~1|ID), data=dat_snr)
+# summary(lm.CNR)
+con.CNR = emmeans(lm.CNR, specs = "MnII", by = c("ROI"))
+con.CNR %>% pairs()
+```
+
+
+```{R}
+# For Figure 2B
+dat_snr_sum2 = dat_snr_sum %>% 
+  filter(ROI == "Brain") %>% 
+  group_by(MnII) %>% 
+  reframe(COV.SNR = mean(COV.SNR) %>% round(.,2),
+          COV.CNR = mean(COV.CNR) %>% round(.,2))
+dat_snr_sum3 = data.frame(
+  MnII = rep(dat_snr_sum2$MnII,2),
+  Measure = factor(c(rep("SNR",2),rep("CNR",2)),levels=c("SNR","CNR")),
+  COV = c(dat_snr_sum2$COV.SNR,dat_snr_sum2$COV.CNR)
+)
+
+p = ggplot(dat_snr_sum3,
+           aes(x = Measure, y=COV, fill=MnII, color=MnII))
+p = p + geom_hline(yintercept=1,linetype="dashed", color="grey75",linewidth=2)
+p = p + geom_bar(stat="identity", alpha=1,color=NA,
+                 position=position_dodge(0.8),width=0.75, linewidth=1)
+p = p + scale_fill_manual(values=ColPal$RGB[c(1,3)])
+p = p + scale_y_continuous(limits = c(0,2), breaks = seq(0,1.5,0.5),
+                           expand = c(0,0,0,0))
+p = p + theme_classic()
+p = p + facet_grid(. ~ MnII)
+p = p + labs(x="",y="COV",title="Inter-subject Variance of Brain SNR and CNR")
+p = p + theme(plot.title = element_text(size=18,family="sans",face="bold",hjust=0.5)
+              , axis.title.x = element_blank()
+              , axis.text.x = element_text(size=14,family="sans",angle=70,hjust=0,vjust=0)
+              , axis.title.y = element_text(size=16,face="bold",family="sans")
+              , axis.text.y = element_text(size=14,family="sans")
+              , legend.title = element_text(size=16,face="bold",family="sans")
+              , legend.text = element_text(size=14,family="sans")
+              , panel.spacing.x = unit(0.05, "lines")
+              , strip.text = element_blank()
+              , strip.background = element_blank()
+              )
+p
+```
+
+```{R, fig.height=1.2, fig.width=1.6}
+p = ggplot(dat_snr_sum3,
+           aes(x = Measure, y=COV, fill=MnII, color=MnII))
+p = p + geom_hline(yintercept=1,linetype="dashed", color="grey75")
+p = p + geom_bar(stat="identity", alpha=1,color=NA,
+                 position=position_dodge(0.8),width=0.75, linewidth=0.25)
+p = p + scale_fill_manual(values=ColPal$RGB[c(1,3)])
+p = p + scale_y_continuous(limits = c(0,2), breaks = seq(0,1.5,0.5),
+                           expand = c(0,0,0,0))
+p = p + theme_classic()
+p = p + facet_grid(. ~ MnII)
+p = p + labs(x="",y="COV")
+p = p + theme(plot.title = element_blank()
+              , axis.title.x = element_blank()
+              , axis.text.x = element_text(size=8,family="sans",angle=70,hjust=0,vjust=0)
+              , axis.title.y = element_text(size=9,face="bold",family="sans")
+              , axis.text.y = element_text(size=7,family="sans")
+              , panel.spacing.x = unit(0.05, "lines")
+              , strip.text = element_blank()
+              , strip.background = element_blank()
+              , legend.position = "none")
+# p
+ggsave(filename="./Fig2_B4_COV_SNR.tiff"
+       ,plot=p
+       ,device="tiff"
+       ,path=paste0(wdir)
+       ,width=1.2,height=1.2,units="in",dpi=300)
+```
