@@ -20,8 +20,8 @@ lL = length(libs)
 vers = c("3.5.0","4.0.0") # minimum R required is 4.0.0
 lV = length(vers)
 minvers = max(package_version(vers))
-if (getRversion() != minvers) {stop(paste0("ERROR: minimum R version must be ",minvers))} 
-for (i in 1:length(libs)) {
+if (getRversion() >= minvers) {stop(paste0("ERROR: minimum R version must be ",minvers))} 
+for (i in 1:lL) {
   if (lL != lV) {stop("be sure correct minvers are included libs")}
   if (!requireNamespace(libs[i], quietly = TRUE)) {install.packages(libs[i])}
 }
