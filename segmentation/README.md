@@ -23,6 +23,7 @@ Scripts used for inverse alignments of the *InVivo* Atlas to the dataset MDT.
 | `FSL_Inverse_Alignment.sh` | FSL FLIRT/FNIRT shell script and corresponding config file `mdt2atlas_config.cnf` |
 | `01_affMDA2Atlas.mat` | SPM12 implementation: data for forward affine transform (FSL). |
 | `SPMNormalize_job.m` | SPM12 implementation: batch script for forward warping step. |
+| `02_wa_AvgPostWarp_sn.mat` | SPM12 implementation: data for forward warping step. |
 | `SPMDeformation_job.m` | SPM12 implementation:  batch script to convert _sn file to deformation field. |
 | `SPMInversePullback_job.m` | SPM12 implementation: batch script to invert deformation field. | 
 | `01_iwa_Avg2Atlas.mat` | SPM12 implementation: inverted affine transform (FSL). | 
