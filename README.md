@@ -19,10 +19,10 @@ Note: To run scripts/markdown files, data must be run locally (perhaps after a g
 
 ## Repository Subdirectories
 
-- **[preprocessing/](./preprocessing/README.md)** — MEMRI data preprocessing, QA metrics (e.g., NMI, JSI, MDT), and statistical analysis of QA outcomes
+- **[preprocessing/](./preprocessing/)** — MEMRI data preprocessing, QA metrics (e.g., NMI, JSI, MDT), and statistical analysis of QA outcomes
 - **[requirements/](./requirements)** —  R and Python requirement install functions.
-- **[segmentation/](./segmentation/README.md)** —  *InVivo* brain segmentation using the __*InVivoSegment*__ pipeline (a separate GitHub repo)
-- **[simulations/](./simulations/README.md)** — Generation and processing of noise-only and simulation data, and statistical analysis
+- **[segmentation/](./segmentation/)** —  *InVivo* brain segmentation using the __*InVivoSegment*__ pipeline (a separate GitHub repo)
+- **[simulations/](./simulations/)** — Generation and processing of noise-only and simulation data, and statistical analysis
 
 ## Requirements
 
