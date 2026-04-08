@@ -35,7 +35,12 @@ packages_to_install = [
     "nibabel",
     "numpy",
     "pandas",
-    "sklearn"
+    "sklearn",
+    "matplotlib",
+    "IPython",
+    "scipy",
+    "itertools",
+    "seaborn"
 ]
 
 install_packages(packages_to_install)
