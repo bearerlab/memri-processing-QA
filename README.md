@@ -7,7 +7,7 @@
 *If code is used or modified, please cite this repository (see "Cite this Repository" above) and the published paper (DOI below).*
 
 <!-- [![DOI](https://img.shields.io/badge/DOI-10.XXXX%2FXXXXX-blue)](https://doi.org/10.XXXX/XXXXX) -->
-[![bioRxiv](https://img.shields.io/badge/bioRxiv-10.XXXX%2FXXXXX-red)](https://doi.org/10.64898/2026.04.10.717774)
+[![bioRxiv](https://img.shields.io/badge/bioRxiv-10.64898/2026.04.10.717774-red)](https://doi.org/10.64898/2026.04.10.717774)
 
 ## Overview
 
