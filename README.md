@@ -1,13 +1,13 @@
 # Code Used in 'Quality Assurance Strategies for Brain State Characterization by MEMRI'
 
-**Authors:** Taylor W. Uselman<sup>1</sup>, Russell E. Jacobs<sup>2,3</sup>, and Elaine L. Bearer<sup>1,3</sup>.
+## Citation [![JNEUMETH](https://shields.io/badge/DOI-Journal_of_Neuroscience_Methods-blue)](https://doi.org/10.1016/j.jneumeth.2026.110896)
 
-**Affiliations:** <sup>1</sup>University of New Mexico, School of Medicine; <sup>2</sup>Zilka Neurogenetic Institute, USC Keck School of Medicine; <sup>3</sup>Beckman Institute, California Institute of Technology. 
+> Uselman, T.W., Jacobs, R.E., and Bearer, E.L., 2026. Quality assurance strategies for brain state characterization by MEMRI. _J. Neurosci. Meth._ (in press), 110896. doi:10.1016/j.jneumeth.2026.110896
 
-*If code is used or modified, please cite this repository (see "Cite this Repository" above) and the published paper (DOI below).*
 
-<!-- [![DOI](https://img.shields.io/badge/DOI-10.XXXX%2FXXXXX-blue)](https://doi.org/10.XXXX/XXXXX) -->
-[![bioRxiv](https://img.shields.io/badge/bioRxiv-10.64898/2026.04.10.717774-red)](https://doi.org/10.64898/2026.04.10.717774)
+
+
+
 
 ## Overview
 
