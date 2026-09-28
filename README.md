@@ -2,7 +2,7 @@
 
 ## Citation [![JNEUMETH](https://shields.io/badge/DOI-Journal_of_Neuroscience_Methods-blue)](https://doi.org/10.1016/j.jneumeth.2026.110896)
 
-> Uselman, T.W., Jacobs, R.E., and Bearer, E.L., 2026. Quality assurance strategies for brain state characterization by MEMRI. _J. Neurosci. Meth._ (in press), 110896. doi:10.1016/j.jneumeth.2026.110896
+> Uselman, T.W., Jacobs, R.E., and Bearer, E.L., 2026. Quality assurance strategies for brain state characterization by MEMRI. _J. Neurosci. Meth._, 110896. doi:10.1016/j.jneumeth.2026.110896
 
 
 
